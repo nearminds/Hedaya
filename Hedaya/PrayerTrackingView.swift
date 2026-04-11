@@ -1,6 +1,9 @@
 // MARK: - Prayer Tracking — Tree UI (roots, trunk, branches)
 // Uses TreeArt.svg when present (from Downloads); else SpriteKit scene. Overlays for state and taps.
 
+import CoreLocation
+import SpriteKit
+import SVGView
 import SwiftUI
 
 private let prayerTimeFormatter: DateFormatter = {
@@ -25,9 +28,6 @@ private func formatPrayerTime(_ date: Date) -> String {
 private func formatIslamicDate(_ date: Date) -> String {
     islamicDateFormatter.string(from: date)
 }
-import CoreLocation
-import SpriteKit
-import SVGView
 
 struct PrayerTrackingView: View {
     @StateObject private var locationManager = PrayerLocationManager()
@@ -139,21 +139,15 @@ private struct PrayerTreeGraphicContainerView: View {
         Bundle.main.url(forResource: "TreeArt", withExtension: "svg") != nil
     }
 
-    private func levelNameAr(_ level: PathLevel) -> String {
-        switch level {
-        case .seeds: return "البذور"
-        case .roots: return "الجذور"
-        case .growth: return "النمو"
-        case .steadfast: return "الثبات"
-        case .blossom: return "الإزهار"
-        }
-    }
-
-    private var formattedDate: String {
+    private static let dayDateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "EEEE، d MMMM"
         f.locale = Locale(identifier: "ar")
-        return f.string(from: Date())
+        return f
+    }()
+
+    private var formattedDate: String {
+        Self.dayDateFormatter.string(from: Date())
     }
 
     /// When motivating or no profile: show full stats (streak number, progress bar). When sometimesHeavy or preferMinimal: minimal (no large streak, no bar).
@@ -218,7 +212,7 @@ private struct PrayerTreeGraphicContainerView: View {
                         .font(.system(size: 13))
                         .foregroundStyle(Color.secondary)
                     HStack(spacing: 6) {
-                        Text(levelNameAr(store.currentLevel))
+                        Text(store.currentLevel.arabicName)
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(Color(hex: "2ECC71"))
                         if useFullStats {

@@ -22,50 +22,32 @@ struct AzkarGroupView: View {
     @State private var showPulse: Bool = false
     @State private var showCompletionEffect: Bool = false
     @Environment(\.dismiss) private var dismiss
-    
+    @Environment(\.colorScheme) private var colorScheme
+
     private var currentZikr: Zikr {
         group.azkar[currentIndex]
     }
-    
+
     private var progress: Double {
         guard currentZikr.repetitions > 0 else { return 0 }
         return Double(currentCount) / Double(currentZikr.repetitions)
     }
-    
+
     private var overallProgress: Double {
         let totalAzkar = group.azkar.count
         guard totalAzkar > 0 else { return 0 }
         return (Double(currentIndex) + progress) / Double(totalAzkar)
     }
-    
-    private var gradientColors: [Color] {
-        switch group.color {
-        case "morning":
-            return [Color(hex: "F39C12"), Color(hex: "F1C40F")]
-        case "evening":
-            return [Color(hex: "2C3E50"), Color(hex: "3498DB")]
-        case "prayer":
-            return [Color(hex: "1B7A4A"), Color(hex: "2ECC71")]
-        case "sleep":
-            return [Color(hex: "8E44AD"), Color(hex: "9B59B6")]
-        case "misc":
-            return [Color(hex: "E74C3C"), Color(hex: "E67E22")]
-        case "ad3ia":
-            return [Color(hex: "0D7377"), Color(hex: "14A3B8")]
-        default:
-            return [Color(hex: "1B7A4A"), Color(hex: "2ECC71")]
-        }
-    }
+
+    private var gradientColors: [Color] { group.gradientColors }
     
     var body: some View {
         ZStack {
-            // Background
+            // Background — adapts to dark/light mode
             LinearGradient(
-                colors: [
-                    Color(hex: "F0F7F4"),
-                    Color(hex: "E8F5E9"),
-                    Color(hex: "F5F5F5")
-                ],
+                colors: colorScheme == .dark
+                    ? [Color(hex: "0D1A14"), Color(hex: "0A1510"), Color(hex: "0F1410")]
+                    : [Color(hex: "F0F7F4"), Color(hex: "E8F5E9"), Color(hex: "F5F5F5")],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -146,7 +128,7 @@ struct AzkarGroupView: View {
             .frame(maxHeight: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(.white)
+                    .fill(Color(.systemBackground))
                     .shadow(color: .black.opacity(0.06), radius: 12, x: 0, y: 4)
                     .padding(.horizontal, 16)
             )

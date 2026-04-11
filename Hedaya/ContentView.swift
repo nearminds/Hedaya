@@ -196,7 +196,7 @@ struct TodayStatusCard: View {
 
     private var streakInfo: (days: Int, level: String)? {
         guard prayerTracker.streakDays > 0 else { return nil }
-        return (prayerTracker.streakDays, levelNameAr(prayerTracker.currentLevel))
+        return (prayerTracker.streakDays, prayerTracker.currentLevel.arabicName)
     }
 
     private var essentialsProgress: (done: Int, total: Int)? {
@@ -288,15 +288,6 @@ struct TodayStatusCard: View {
         }
     }
 
-    private func levelNameAr(_ level: PathLevel) -> String {
-        switch level {
-        case .seeds: return "البذور"
-        case .roots: return "الجذور"
-        case .growth: return "النمو"
-        case .steadfast: return "الثبات"
-        case .blossom: return "الإزهار"
-        }
-    }
 }
 
 // MARK: - Status Row (label + icon + value, RTL table layout)
@@ -443,26 +434,8 @@ struct QuranCard: View {
 struct GroupCard: View {
     let group: AzkarGroup
 
-    private var gradientColors: [Color] {
-        switch group.color {
-        case "morning":
-            return [Color(hex: "F39C12"), Color(hex: "F1C40F")]
-        case "evening":
-            return [Color(hex: "2C3E50"), Color(hex: "3498DB")]
-        case "prayer":
-            return [Color(hex: "1B7A4A"), Color(hex: "2ECC71")]
-        case "sleep":
-            return [Color(hex: "8E44AD"), Color(hex: "9B59B6")]
-        case "misc":
-            return [Color(hex: "E74C3C"), Color(hex: "E67E22")]
-        case "ad3ia":
-            return [Color(hex: "0D7377"), Color(hex: "14A3B8")]
-        default:
-            return [Color(hex: "1B7A4A"), Color(hex: "2ECC71")]
-        }
-    }
-
     var body: some View {
+        let colors = group.gradientColors
         VStack(spacing: 14) {
             ZStack {
                 Circle()
@@ -490,12 +463,12 @@ struct GroupCard: View {
             RoundedRectangle(cornerRadius: 20)
                 .fill(
                     LinearGradient(
-                        colors: gradientColors,
+                        colors: colors,
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
-                .shadow(color: gradientColors[0].opacity(0.4), radius: 8, x: 0, y: 4)
+                .shadow(color: colors[0].opacity(0.4), radius: 8, x: 0, y: 4)
         )
     }
 }

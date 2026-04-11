@@ -173,6 +173,16 @@ enum PathLevel: String, Codable, CaseIterable {
     case growth
     case steadfast
     case blossom
+
+    var arabicName: String {
+        switch self {
+        case .seeds:     return "البذور"
+        case .roots:     return "الجذور"
+        case .growth:    return "النمو"
+        case .steadfast: return "الثبات"
+        case .blossom:   return "الإزهار"
+        }
+    }
 }
 
 struct ProgressState: Codable {
