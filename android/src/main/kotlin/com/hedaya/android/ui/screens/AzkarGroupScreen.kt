@@ -2,6 +2,7 @@ package com.hedaya.android.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,6 +49,7 @@ fun AzkarGroupScreen(
     group: AzkarGroup,
     onBack: () -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
     val (start, end) = when (group.color) {
         "morning" -> HedayaColors.MorningStart to HedayaColors.MorningEnd
         "evening" -> HedayaColors.EveningStart to HedayaColors.EveningEnd
@@ -69,14 +71,14 @@ fun AzkarGroupScreen(
     val progress = if (currentZikr.repetitions > 0) currentCount.toFloat() / currentZikr.repetitions else 0f
     val overallProgress = if (group.azkar.isNotEmpty()) (currentIndex.toFloat() + progress) / group.azkar.size else 0f
 
+    val cardBg = if (isDark) HedayaColors.CardSurfaceDark else HedayaColors.CardSurfaceLight
+    val textPrimary = MaterialTheme.colorScheme.onSurface
+    val textSecondary = MaterialTheme.colorScheme.onSurfaceVariant
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFFF0F7F4), Color(0xFFE8F5E9), Color(0xFFF5F5F5))
-                )
-            )
+            .background(HedayaColors.backgroundGradient(isDark))
     ) {
         Column(
             modifier = Modifier
@@ -89,7 +91,7 @@ fun AzkarGroupScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Text("←", fontSize = 24.sp)
+                    Text("←", fontSize = 24.sp, color = textPrimary)
                 }
                 Text(
                     text = group.name,
@@ -103,6 +105,8 @@ fun AzkarGroupScreen(
                 CompletionView(
                     groupName = group.name,
                     gradientColors = gradientColors,
+                    textPrimary = textPrimary,
+                    textSecondary = textSecondary,
                     onReset = {
                         currentIndex = 0
                         currentCount = 0
@@ -115,7 +119,7 @@ fun AzkarGroupScreen(
                 Text(
                     "الذكر ${currentIndex + 1} من ${group.azkar.size}",
                     fontSize = 13.sp,
-                    color = HedayaColors.TextSecondary
+                    color = textSecondary
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 LinearProgressIndicator(
@@ -134,7 +138,7 @@ fun AzkarGroupScreen(
                         .fillMaxWidth()
                         .shadow(12.dp, RoundedCornerShape(24.dp))
                         .clip(RoundedCornerShape(24.dp))
-                        .background(Color.White)
+                        .background(cardBg)
                 ) {
                     Column(
                         modifier = Modifier
@@ -145,7 +149,7 @@ fun AzkarGroupScreen(
                         Text(
                             text = currentZikr.text,
                             fontSize = 24.sp,
-                            color = Color(0xFF2C3E50),
+                            color = textPrimary,
                             textAlign = TextAlign.Center,
                             lineHeight = 36.sp
                         )
@@ -153,7 +157,7 @@ fun AzkarGroupScreen(
                         Text(
                             text = currentZikr.reference,
                             fontSize = 14.sp,
-                            color = HedayaColors.TextSecondary
+                            color = textSecondary
                         )
                     }
                 }
@@ -169,11 +173,11 @@ fun AzkarGroupScreen(
                         fontWeight = FontWeight.Bold,
                         color = start
                     )
-                    Text(" / ", fontSize = 28.sp, color = HedayaColors.TextSecondary)
+                    Text(" / ", fontSize = 28.sp, color = textSecondary)
                     Text(
                         text = "${currentZikr.repetitions}",
                         fontSize = 28.sp,
-                        color = HedayaColors.TextSecondary
+                        color = textSecondary
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -213,7 +217,7 @@ fun AzkarGroupScreen(
                             .size(90.dp)
                             .shadow(8.dp, CircleShape)
                             .clip(CircleShape)
-                            .background(Color.White),
+                            .background(cardBg),
                         contentAlignment = Alignment.Center
                     ) {
                         Text("👆", fontSize = 28.sp)
@@ -258,6 +262,8 @@ fun AzkarGroupScreen(
 private fun CompletionView(
     groupName: String,
     gradientColors: List<Color>,
+    textPrimary: Color,
+    textSecondary: Color,
     onReset: () -> Unit,
     onHome: () -> Unit
 ) {
@@ -280,8 +286,8 @@ private fun CompletionView(
             Text("✓", fontSize = 50.sp, color = Color.White, fontWeight = FontWeight.Bold)
         }
         Spacer(modifier = Modifier.height(24.dp))
-        Text("بارك الله فيك!", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2C3E50))
-        Text("لقد أتممت $groupName", fontSize = 18.sp, color = HedayaColors.TextSecondary)
+        Text("بارك الله فيك!", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+        Text("لقد أتممت $groupName", fontSize = 18.sp, color = textSecondary)
         Text("تقبّل الله منّا ومنكم", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = gradientColors[0])
         Spacer(modifier = Modifier.weight(1f))
         Button(onClick = onReset) {

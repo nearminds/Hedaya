@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
@@ -64,6 +66,7 @@ private val KEY_GOAL = intPreferencesKey("sebha_max_goal")
 
 @Composable
 fun GeneralSebhaScreen(onBack: () -> Unit) {
+    val isDark = isSystemInDarkTheme()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var count by remember { mutableIntStateOf(runBlocking { context.dataStore.data.map { it[KEY_COUNT] ?: 0 }.first() }) }
@@ -73,6 +76,10 @@ fun GeneralSebhaScreen(onBack: () -> Unit) {
     val view = LocalView.current
     val effectiveGoal = if (maxGoal > 0) maxGoal else null
     val progress = if (effectiveGoal != null && effectiveGoal > 0) (count.toFloat() / effectiveGoal).coerceIn(0f, 1f) else 0f
+
+    val cardBg = if (isDark) HedayaColors.CardSurfaceDark else HedayaColors.CardSurfaceLight
+    val textPrimary = MaterialTheme.colorScheme.onSurface
+    val textSecondary = MaterialTheme.colorScheme.onSurfaceVariant
 
     fun persist() {
         scope.launch {
@@ -95,23 +102,20 @@ fun GeneralSebhaScreen(onBack: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFFF0F7F4), Color(0xFFE8F5E9), Color(0xFFF5F5F5))
-                )
-            )
+            .background(HedayaColors.backgroundGradient(isDark))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(onClick = { showSettings = true }) {
-                    Text("⚙", fontSize = 22.sp)
+                    Text("⚙️", fontSize = 22.sp)
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -122,9 +126,9 @@ fun GeneralSebhaScreen(onBack: () -> Unit) {
                 color = HedayaColors.PrimaryGreen
             )
             if (effectiveGoal != null) {
-                Text("من $effectiveGoal", fontSize = 18.sp, color = HedayaColors.TextSecondary)
+                Text("من $effectiveGoal", fontSize = 18.sp, color = textSecondary)
             } else {
-                Text("اضغط للعد", fontSize = 16.sp, color = HedayaColors.TextSecondary)
+                Text("اضغط للعد", fontSize = 16.sp, color = textSecondary)
             }
             if (effectiveGoal != null) {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -161,7 +165,7 @@ fun GeneralSebhaScreen(onBack: () -> Unit) {
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)
-                        .background(Color.White),
+                        .background(cardBg),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("👆", fontSize = 32.sp)
@@ -177,11 +181,12 @@ fun GeneralSebhaScreen(onBack: () -> Unit) {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = onBack) {
-                Text("← رجوع", fontSize = 16.sp)
+                Text("← رجوع", fontSize = 16.sp, color = textPrimary)
             }
         }
         if (showSettings) {
             SettingsSheet(
+                isDark = isDark,
                 goalEnabled = effectiveGoal != null,
                 goalValue = settingsGoal,
                 onGoalEnabledChange = { enabled ->
@@ -201,12 +206,16 @@ fun GeneralSebhaScreen(onBack: () -> Unit) {
 
 @Composable
 private fun SettingsSheet(
+    isDark: Boolean,
     goalEnabled: Boolean,
     goalValue: Int,
     onGoalEnabledChange: (Boolean) -> Unit,
     onGoalValueChange: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val sheetBg = if (isDark) HedayaColors.CardSurfaceDark else HedayaColors.CardSurfaceLight
+    val textColor = MaterialTheme.colorScheme.onSurface
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -217,18 +226,18 @@ private fun SettingsSheet(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                .background(sheetBg, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                 .padding(24.dp)
                 .clickable(enabled = false) {}
         ) {
-            Text("إعدادات السبحة", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("إعدادات السبحة", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = textColor)
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("تفعيل هدف (إشعار عند الوصول)")
+                Text("تفعيل هدف (إشعار عند الوصول)", color = textColor)
                 Switch(
                     checked = goalEnabled,
                     onCheckedChange = onGoalEnabledChange
@@ -275,7 +284,7 @@ private fun showNotification(context: Context, count: Int) {
     }
     val notification = NotificationCompat.Builder(context, channelId)
         .setSmallIcon(android.R.drawable.ic_dialog_info)
-        .setContentTitle("تم الوصول للهدف! 🎉")
+        .setContentTitle("تم الوصول للهدف!")
         .setContentText("بلغت $count تسبيحة. بارك الله فيك.")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .build()
