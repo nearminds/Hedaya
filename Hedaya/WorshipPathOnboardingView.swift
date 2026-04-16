@@ -5,6 +5,7 @@ import SwiftUI
 struct WorshipPathOnboardingView: View {
     @ObservedObject var store: WorshipPathStore
     var onComplete: (WorshipProfile) -> Void
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var step = 0
     @State private var profile: WorshipProfile
@@ -21,7 +22,7 @@ struct WorshipPathOnboardingView: View {
             HStack(spacing: 6) {
                 ForEach(0..<totalSteps, id: \.self) { i in
                     Circle()
-                        .fill(i <= step ? Color(hex: "1B7A4A") : Color(hex: "2D4A3E").opacity(0.3))
+                        .fill(i <= step ? Color(hex: "1B7A4A") : Color.secondary.opacity(0.3))
                         .frame(width: 8, height: 8)
                 }
             }
@@ -30,7 +31,7 @@ struct WorshipPathOnboardingView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     Text("لا إجابة صحيحة واحدة—اختر ما يناسبك")
                         .font(.system(size: 14))
-                        .foregroundStyle(Color(hex: "2D4A3E").opacity(0.8))
+                        .foregroundStyle(Color.secondary)
                     questionContent
                 }
                 .padding(20)
@@ -40,7 +41,9 @@ struct WorshipPathOnboardingView: View {
         }
         .background(
             LinearGradient(
-                colors: [Color(hex: "F0F7F4"), Color(hex: "E8F5E9")],
+                colors: colorScheme == .dark
+                    ? [Color(hex: "0D1A14"), Color(hex: "0A1510")]
+                    : [Color(hex: "F0F7F4"), Color(hex: "E8F5E9")],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -67,7 +70,7 @@ struct WorshipPathOnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("كيف ترى انتظامك حالياً في الصلاة والذكر؟")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color(hex: "2D4A3E"))
+                .foregroundStyle(Color.primary)
             ForEach(ConsistencyLevel.allCases, id: \.rawValue) { level in
                 choiceButton(consistencyLabel(level), selected: profile.consistencyLevel == level) { profile.consistencyLevel = level }
             }
@@ -78,7 +81,7 @@ struct WorshipPathOnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("كم دقيقة تقريباً يمكنك تخصيصها يومياً للعبادة؟")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color(hex: "2D4A3E"))
+                .foregroundStyle(Color.primary)
             ForEach(TimeAvailability.allCases, id: \.rawValue) { t in
                 choiceButton(timeLabel(t), selected: profile.timeAvailability == t) { profile.timeAvailability = t }
             }
@@ -89,7 +92,7 @@ struct WorshipPathOnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("ما أبرز ما تريده من هذه المسيرة؟")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color(hex: "2D4A3E"))
+                .foregroundStyle(Color.primary)
             ForEach(PrimaryIntention.allCases, id: \.rawValue) { i in
                 choiceButton(intentionLabel(i), selected: profile.primaryIntention == i) { profile.primaryIntention = i }
             }
@@ -100,7 +103,7 @@ struct WorshipPathOnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("ما الذي تريد أن نركّز عليه معك؟")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color(hex: "2D4A3E"))
+                .foregroundStyle(Color.primary)
             ForEach(WorshipArea.allCases, id: \.rawValue) { area in
                 Toggle(worshipAreaLabel(area), isOn: Binding(
                     get: { profile.worshipAreas.contains(area) },
@@ -108,7 +111,7 @@ struct WorshipPathOnboardingView: View {
                 ))
                 .tint(Color(hex: "1B7A4A"))
                 .padding()
-                .background(Color.white.opacity(0.7), in: RoundedRectangle(cornerRadius: 12))
+                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
             }
         }
     }
@@ -117,7 +120,7 @@ struct WorshipPathOnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("ما وتيرة تناسبك؟")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color(hex: "2D4A3E"))
+                .foregroundStyle(Color.primary)
             ForEach(Pace.allCases, id: \.rawValue) { p in
                 choiceButton(paceLabel(p), selected: profile.pace == p) { profile.pace = p }
             }
@@ -128,7 +131,7 @@ struct WorshipPathOnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("كيف تشعر حيال متابعة نفسك؟")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color(hex: "2D4A3E"))
+                .foregroundStyle(Color.primary)
             ForEach(TrackingFeeling.allCases, id: \.rawValue) { t in
                 choiceButton(trackingLabel(t), selected: profile.trackingFeeling == t) { profile.trackingFeeling = t }
             }
@@ -139,7 +142,7 @@ struct WorshipPathOnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("هل تريد أن نأخذ وضعك في الاعتبار؟")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color(hex: "2D4A3E"))
+                .foregroundStyle(Color.primary)
             ForEach(LifeContext.allCases, id: \.rawValue) { l in
                 choiceButton(lifeContextLabel(l), selected: profile.lifeContext == l) { profile.lifeContext = l }
             }
@@ -149,12 +152,12 @@ struct WorshipPathOnboardingView: View {
     private func choiceButton(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack {
-                Text(title).font(.system(size: 16)).foregroundStyle(Color(hex: "2D4A3E"))
+                Text(title).font(.system(size: 16)).foregroundStyle(Color.primary)
                 Spacer()
                 if selected { Image(systemName: "checkmark.circle.fill").foregroundStyle(Color(hex: "1B7A4A")) }
             }
             .padding()
-            .background(selected ? Color(hex: "1B7A4A").opacity(0.12) : Color.white.opacity(0.7), in: RoundedRectangle(cornerRadius: 12))
+            .background(selected ? Color(hex: "1B7A4A").opacity(0.12) : Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
     }
@@ -166,7 +169,7 @@ struct WorshipPathOnboardingView: View {
                 finishOrAdvance()
             }
             .font(.system(size: 15))
-            .foregroundStyle(Color(hex: "2D4A3E").opacity(0.8))
+            .foregroundStyle(Color.secondary)
             .buttonStyle(.plain)
             Spacer()
             Button(step < totalSteps - 1 ? "التالي" : "إنهاء") {
@@ -183,7 +186,7 @@ struct WorshipPathOnboardingView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(Color.white.opacity(0.5))
+        .background(.ultraThinMaterial)
     }
 
     private func finishOrAdvance() {

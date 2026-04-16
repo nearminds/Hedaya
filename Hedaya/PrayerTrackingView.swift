@@ -130,6 +130,7 @@ private func azkarGroupForBranch(_ branch: BranchType) -> AzkarGroup? {
 // MARK: - Container so we can hold debug state and add toolbar
 private struct PrayerTreeGraphicContainerView: View {
     @ObservedObject var store: PrayerTrackingStore
+    @Environment(\.colorScheme) private var colorScheme
     @State private var showDebugOverlay = false
     @State private var showCalculationSettings = false
     @State private var azkarGroupToPresent: AzkarGroup?
@@ -276,6 +277,7 @@ private struct PrayerTreeGraphicContainerView: View {
         }
         .sheet(isPresented: $showCalculationSettings) {
             PrayerCalculationSettingsView(store: store)
+                .preferredColorScheme(colorScheme == .dark ? .dark : .light)
         }
         .sheet(item: $azkarGroupToPresent) { group in
             NavigationStack {
@@ -289,10 +291,12 @@ private struct PrayerTreeGraphicContainerView: View {
             }
             .environmentObject(store)
             .environment(\.layoutDirection, .rightToLeft)
+            .preferredColorScheme(colorScheme == .dark ? .dark : .light)
         }
         .sheet(isPresented: $showQuranReader) {
             QuranView()
                 .environmentObject(store)
+                .preferredColorScheme(colorScheme == .dark ? .dark : .light)
         }
     }
 

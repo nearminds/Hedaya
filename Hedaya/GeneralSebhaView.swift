@@ -1,3 +1,4 @@
+import AudioToolbox
 import SwiftUI
 import UserNotifications
 
@@ -40,7 +41,11 @@ struct GeneralSebhaView: View {
     /// Local goal value in settings sheet; only written to storedMaxGoal on "تم" so presets stick.
     @State private var settingsGoalValue: Int = 100
 
-    private let sebhaColors: [Color] = [Color(hex: "1B7A4A"), Color(hex: "2ECC71")]
+    private var sebhaColors: [Color] {
+        colorScheme == .dark
+            ? [Color(hex: "4CAF82"), Color(hex: "7ED957")]
+            : [Color(hex: "1B7A4A"), Color(hex: "2ECC71")]
+    }
 
     private var effectiveMaxGoal: Int? {
         let g = storedMaxGoal
@@ -57,14 +62,14 @@ struct GeneralSebhaView: View {
         return popularZekrList[max(0, idx)]
     }
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [
-                    Color(hex: "F0F7F4"),
-                    Color(hex: "E8F5E9"),
-                    Color(hex: "F5F5F5")
-                ],
+                colors: colorScheme == .dark
+                    ? [Color(hex: "0D1A14"), Color(hex: "0A1510"), Color(hex: "0F1410")]
+                    : [Color(hex: "F0F7F4"), Color(hex: "E8F5E9"), Color(hex: "F5F5F5")],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -88,7 +93,7 @@ struct GeneralSebhaView: View {
                     VStack(spacing: 6) {
                         Text("الذكر المقترح")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Color(hex: "2D4A3E"))
+                            .foregroundStyle(Color.secondary)
                         Text(selectedZekr.text)
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundStyle(sebhaColors[0])
@@ -114,7 +119,7 @@ struct GeneralSebhaView: View {
                     if let max = effectiveMaxGoal {
                         Text("من \(max)")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundStyle(Color(hex: "2D4A3E"))
+                            .foregroundStyle(Color.secondary)
                     } else {
                         Text("اضغط للعد")
                             .font(.system(size: 16, weight: .medium))
@@ -201,6 +206,9 @@ struct GeneralSebhaView: View {
         }
         .sheet(isPresented: $showSettings) {
             sebhaSettingsSheet
+        }
+        .onChange(of: storedCount) { newValue in
+            if count != newValue { count = newValue }
         }
         .onChange(of: showSettings) { isShowing in
             if isShowing {
@@ -344,6 +352,7 @@ struct GeneralSebhaView: View {
     private func triggerGoalReached() {
         let feedback = UINotificationFeedbackGenerator()
         feedback.notificationOccurred(.success)
+        AudioServicesPlaySystemSound(1057)
         showMaxReachedAlert = true
         SebhaNotification.scheduleGoalReachedNotification(count: count)
     }

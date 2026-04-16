@@ -7,6 +7,7 @@ import SwiftUI
 struct QuranView: View {
     @EnvironmentObject private var prayerTracker: PrayerTrackingStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var surahs: [QuranSurah] = []
     @State private var searchText = ""
@@ -14,10 +15,10 @@ struct QuranView: View {
 
     private var filtered: [QuranSurah] {
         if searchText.isEmpty { return surahs }
-        let q = searchText.lowercased()
+        let q = searchText
         return surahs.filter {
-            $0.name.contains(searchText) ||
-            $0.englishName.lowercased().contains(q) ||
+            $0.name.localizedCaseInsensitiveContains(q) ||
+            $0.englishName.localizedCaseInsensitiveContains(q) ||
             "\($0.id)".contains(q)
         }
     }
@@ -42,13 +43,13 @@ struct QuranView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("إغلاق") { dismiss() }
-                        .foregroundStyle(Color(hex: "1B7A4A"))
+                        .foregroundStyle(colorScheme == .dark ? Color(hex: "5EC98A") : Color(hex: "1B7A4A"))
                 }
                 if prayerTracker.todayLog.quranDone {
                     ToolbarItem(placement: .topBarTrailing) {
                         Label("تم الورد", systemImage: "checkmark.seal.fill")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(Color(hex: "B8860B"))
+                            .foregroundStyle(colorScheme == .dark ? Color(hex: "D4A017") : Color(hex: "B8860B"))
                             .labelStyle(.titleAndIcon)
                     }
                 }
@@ -75,23 +76,23 @@ struct QuranView: View {
         Button { readerTarget = .page(prayerTracker.quranProgress.lastPageNumber) } label: {
             HStack {
                 Image(systemName: "bookmark.fill")
-                    .foregroundStyle(Color(hex: "B8860B"))
+                    .foregroundStyle(colorScheme == .dark ? Color(hex: "D4A017") : Color(hex: "B8860B"))
                 VStack(alignment: .leading, spacing: 2) {
                     Text("تابع القراءة")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Color(hex: "2D4A3E").opacity(0.8))
+                        .foregroundStyle(Color.secondary)
                     Text("\(surah.name) — آية \(ayah)")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color(hex: "2D4A3E"))
+                        .foregroundStyle(Color.primary)
                 }
                 Spacer()
                 Image(systemName: "chevron.left")
                     .font(.system(size: 13))
-                    .foregroundStyle(Color(hex: "1B7A4A"))
+                    .foregroundStyle(colorScheme == .dark ? Color(hex: "5EC98A") : Color(hex: "1B7A4A"))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(Color(hex: "FFF8E7"))
+            .background(colorScheme == .dark ? Color(hex: "1A1408") : Color(hex: "FFF8E7"))
         }
         .buttonStyle(.plain)
     }
@@ -158,7 +159,9 @@ struct QuranReaderView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private let pages = QuranDataLoader.allPages
-    private let goldColor = Color(hex: "B8860B")
+    private var goldColor: Color {
+        colorScheme == .dark ? Color(hex: "D4A017") : Color(hex: "B8860B")
+    }
 
     /// Warm cream in light mode; dark sepia in dark mode.
     private var pageBg: Color {
@@ -388,10 +391,11 @@ struct QuranReaderView: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(done ? Color(hex: "3D4E2A") : goldColor)
+                .background(done ? (colorScheme == .dark ? Color(hex: "4CAF82") : Color(hex: "3D4E2A")) : goldColor)
             }
             .buttonStyle(.plain)
             .disabled(done)
+            .accessibilityLabel(done ? "تم تسجيل الورد اليوم" : "تسجيل إتمام ورد القرآن")
         }
     }
 }
@@ -560,14 +564,15 @@ struct SurahPickerView: View {
     let onSelect: (Int) -> Void
     @EnvironmentObject private var prayerTracker: PrayerTrackingStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @State private var surahs: [QuranSurah] = []
     @State private var search = ""
 
     private var filtered: [QuranSurah] {
         if search.isEmpty { return surahs }
-        let q = search.lowercased()
+        let q = search
         return surahs.filter {
-            $0.name.contains(search) || $0.englishName.lowercased().contains(q) || "\($0.id)".contains(q)
+            $0.name.localizedCaseInsensitiveContains(q) || $0.englishName.localizedCaseInsensitiveContains(q) || "\($0.id)".contains(q)
         }
     }
 
@@ -591,7 +596,7 @@ struct SurahPickerView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("إغلاق") { dismiss() }
-                        .foregroundStyle(Color(hex: "1B7A4A"))
+                        .foregroundStyle(colorScheme == .dark ? Color(hex: "5EC98A") : Color(hex: "1B7A4A"))
                 }
             }
         }

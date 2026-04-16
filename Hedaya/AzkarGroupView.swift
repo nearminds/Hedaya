@@ -55,8 +55,10 @@ struct AzkarGroupView: View {
             
             if isCompleted {
                 completionView
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
             } else {
                 zikrContentView
+                    .transition(.opacity)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -78,7 +80,7 @@ struct AzkarGroupView: View {
                 HStack {
                     Text("الذكر \(currentIndex + 1) من \(group.azkar.count)")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color(hex: "2D4A3E"))
+                        .foregroundStyle(Color.primary)
                     Spacer()
                 }
                 
@@ -113,14 +115,14 @@ struct AzkarGroupView: View {
                         .font(.system(size: 24, weight: .medium))
                         .multilineTextAlignment(.center)
                         .lineSpacing(12)
-                        .foregroundStyle(Color(hex: "2C3E50"))
+                        .foregroundStyle(Color.primary)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 30)
-                    
+
                     // Reference
                     Text(currentZikr.reference)
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(Color(hex: "2D4A3E"))
+                        .foregroundStyle(Color.secondary)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 10)
                 }
@@ -148,11 +150,11 @@ struct AzkarGroupView: View {
                     
                     Text("/")
                         .font(.system(size: 28, weight: .light))
-                        .foregroundStyle(Color(hex: "2D4A3E"))
-                    
+                        .foregroundStyle(Color.secondary)
+
                     Text("\(currentZikr.repetitions)")
                         .font(.system(size: 28, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(hex: "2D4A3E"))
+                        .foregroundStyle(Color.secondary)
                 }
                 
                 // Tap circle button
@@ -215,6 +217,9 @@ struct AzkarGroupView: View {
                 .onTapGesture {
                     handleTap()
                 }
+                .accessibilityLabel("عدّاد الذكر")
+                .accessibilityValue("\(currentCount) من \(currentZikr.repetitions)")
+                .accessibilityHint("اضغط للعد")
                 
                 // Navigation buttons
                 HStack(spacing: 40) {
@@ -274,11 +279,11 @@ struct AzkarGroupView: View {
             VStack(spacing: 12) {
                 Text("بارك الله فيك!")
                     .font(.system(size: 32, weight: .bold))
-                    .foregroundStyle(Color(hex: "2C3E50"))
-                
+                    .foregroundStyle(Color.primary)
+
                 Text("لقد أتممت \(group.name)")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(Color(hex: "2D4A3E"))
+                    .foregroundStyle(Color.secondary)
                 
                 Text("تقبّل الله منّا ومنكم")
                     .font(.system(size: 20, weight: .semibold))

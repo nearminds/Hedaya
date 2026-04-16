@@ -344,7 +344,9 @@ final class PrayerTrackingStore: ObservableObject {
     }
 
     func updateQuranProgress(pageNumber: Int, surahNumber: Int, ayahNumber: Int) {
-        guard quranProgress.lastPageNumber != pageNumber else { return }
+        guard quranProgress.lastPageNumber != pageNumber
+              || quranProgress.lastAyahNumber != ayahNumber
+              || quranProgress.lastSurahNumber != surahNumber else { return }
         quranProgress = QuranReadingProgress(
             lastSurahNumber: surahNumber,
             lastAyahNumber: ayahNumber,

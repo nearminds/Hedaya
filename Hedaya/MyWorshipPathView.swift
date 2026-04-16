@@ -51,19 +51,19 @@ struct WorshipPathIntroView: View {
             VStack(spacing: 24) {
                 Text("﷽")
                     .font(.system(size: 28))
-                    .foregroundStyle(Color(hex: "1B5E3A"))
+                    .foregroundStyle(colorScheme == .dark ? Color(hex: "5EC98A") : Color(hex: "1B5E3A"))
                 Text("مسيرتك في العبادة")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(Color(hex: "1B7A4A"))
                     .multilineTextAlignment(.center)
                 Text("خطوة بخطوة، وفق وقتك ونيتك، بدون ضغط ولا مقارنة.")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Color(hex: "2D4A3E"))
+                    .foregroundStyle(Color.primary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 Text("هنا نرتب معاً ما تريد أن تركز عليه من صلاة وذكر وقراءة وصدقة، ونضع خطة بسيطة تتكيف مع أيامك.")
                     .font(.system(size: 15))
-                    .foregroundStyle(Color(hex: "2D4A3E").opacity(0.9))
+                    .foregroundStyle(Color.primary.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
                 VStack(spacing: 14) {
@@ -79,7 +79,7 @@ struct WorshipPathIntroView: View {
                     Button(action: onSkip) {
                         Text("تخطى الآن")
                             .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(Color(hex: "2D4A3E").opacity(0.8))
+                            .foregroundStyle(Color.secondary)
                     }
                 }
                 .padding(.top, 20)
@@ -113,15 +113,15 @@ struct WorshipPathPlanView: View {
                     .padding(.horizontal)
                 Text("بناءً على اختياراتك")
                     .font(.system(size: 14))
-                    .foregroundStyle(Color(hex: "2D4A3E").opacity(0.85))
+                    .foregroundStyle(Color.secondary)
                     .padding(.horizontal)
                 VStack(alignment: .leading, spacing: 12) {
                     Text("الضروريات اليومية")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(Color(hex: "2D4A3E"))
+                        .foregroundStyle(Color.primary)
                     Text("هذه أساس يومك. إن فاتك يوم، الخطة تتكيف ولا نلوم.")
                         .font(.system(size: 14))
-                        .foregroundStyle(Color(hex: "2D4A3E").opacity(0.85))
+                        .foregroundStyle(Color.secondary)
                     ForEach(store.dailyEssentials()) { item in
                         HStack(spacing: 10) {
                             Image(systemName: "checkmark.circle.fill").foregroundStyle(Color(hex: "2ECC71"))
@@ -135,7 +135,7 @@ struct WorshipPathPlanView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("إضافات اختيارية")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(Color(hex: "2D4A3E"))
+                        .foregroundStyle(Color.primary)
                     ForEach(store.optionalBonuses()) { item in
                         Text("• \(item.titleAr)").font(.system(size: 15))
                     }
@@ -145,7 +145,7 @@ struct WorshipPathPlanView: View {
                 .padding(.horizontal)
                 Text("لديك أيام راحة مضمونة. إذا غبت، نعدّل الهدف ولا نعيد العد من الصفر.")
                     .font(.system(size: 14))
-                    .foregroundStyle(Color(hex: "2D4A3E").opacity(0.9))
+                    .foregroundStyle(Color.primary.opacity(0.9))
                     .padding(.horizontal)
                 Button(action: onContinue) {
                     Text("متابعة إلى الشجرة")

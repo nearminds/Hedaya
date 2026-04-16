@@ -61,6 +61,7 @@ struct ContentView: View {
                         .buttonStyle(.plain)
                         .gridCellColumns(2)
                         .accessibilityLabel(prayerTracker.todayLog.quranDone ? "القرآن الكريم، تم الورد اليوم" : "القرآن الكريم، اقرأ وردك اليوم")
+                        .accessibilityHint("اضغط لفتح القرآن الكريم")
 
                         // Morning & evening azkar
                         ForEach(dailyGroups) { group in
@@ -68,6 +69,7 @@ struct ContentView: View {
                                 GroupCard(group: group)
                             }
                             .accessibilityLabel(group.name)
+                            .accessibilityHint("اضغط لبدء الأذكار")
                         }
                     }
                     .padding(.horizontal)
@@ -86,6 +88,7 @@ struct ContentView: View {
                             }
                             .gridCellColumns(isLastOdd ? 2 : 1)
                             .accessibilityLabel(group.name)
+                            .accessibilityHint("اضغط لبدء الأذكار")
                         }
                     }
                     .padding(.horizontal)
@@ -102,6 +105,7 @@ struct ContentView: View {
                         }
                         .gridCellColumns(2)
                         .accessibilityLabel("سبحة عامة، عدّاد ذكر")
+                        .accessibilityHint("اضغط لفتح عدّاد الذكر")
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 20)
@@ -135,10 +139,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showAppearanceSettings) {
             AppearanceSettingsSheet(appearanceMode: $appearanceMode)
+                .preferredColorScheme(colorScheme)
         }
         .sheet(isPresented: $showQuranReader) {
             QuranView()
                 .environmentObject(prayerTracker)
+                .preferredColorScheme(colorScheme)
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -267,7 +273,7 @@ struct TodayStatusCard: View {
 
                     Image(systemName: "chevron.left")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Color(hex: "2D4A3E").opacity(0.3))
+                        .foregroundStyle(Color.secondary.opacity(0.5))
                         .padding(.top, 2)
                         .padding(.leading, 8)
                 }
