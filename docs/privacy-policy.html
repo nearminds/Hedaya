@@ -25,10 +25,10 @@
 
     <h1>هداية — Hedaya</h1>
     <h2 style="margin-top:8px; font-size:22px;">Privacy Policy</h2>
-    <p class="updated">Last updated: March 7, 2026</p>
+    <p class="updated">Last updated: September 11, 2026</p>
 
     <p>
-        Hedaya ("the app") is an Islamic worship companion app for iOS. Your privacy is important to us.
+        Hedaya ("the app") is an Islamic worship companion app for iOS and Android. Your privacy is important to us.
         This policy explains what data the app accesses and how it is used.
     </p>
 
@@ -40,12 +40,14 @@
     <p>
         The app requests access to your device location <strong>only while the app is in use</strong>,
         solely to calculate accurate daily prayer times for your area.
-        Your location is never stored permanently, never shared with third parties,
+        Your location is held in memory only for as long as it takes to compute the times.
+        It is never written to storage, never shared with third parties,
         and never used for advertising or tracking purposes.
+        Declining the location prompt leaves every other feature of the app fully usable.
     </p>
 
     <h2>Data Stored on Your Device</h2>
-    <p>The following is saved locally using iOS standard storage (UserDefaults) on your device only:</p>
+    <p>The following is saved locally on your device only — using the system preference store (UserDefaults on iOS, Jetpack DataStore on Android):</p>
     <ul>
         <li>Prayer tracking progress and streak</li>
         <li>Quran reading progress</li>
@@ -59,6 +61,10 @@
     <h2>Third-Party Services</h2>
     <p>Hedaya does not use any third-party analytics, advertising SDKs, crash reporting services,
     or tracking frameworks. No data is shared with any third party.</p>
+    <p>On Android, the app obtains your coordinates through Google Play services' location
+    provider, which is part of the Android system rather than of Hedaya. The app itself does
+    not request the Internet permission at all, and so is technically incapable of sending
+    anything off your device.</p>
 
     <h2>Notifications</h2>
     <p>

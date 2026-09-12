@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Hedaya privacy manifest.
+
+	  Verified against the source tree: the app contains no networking code
+	  (no URLSession/URLRequest/WKWebView), no analytics, crash-reporting or
+	  advertising SDKs, and no device identifiers. Location is read on device
+	  via CoreLocation to compute prayer times and is never persisted or sent
+	  anywhere. All state is kept in UserDefaults inside the app sandbox.
+
+	  Therefore: no tracking, no tracking domains, no collected data types.
+	  The only required-reason API in use is UserDefaults.
+	-->
+	<key>NSPrivacyTracking</key>
+	<false/>
+
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<!-- CA92.1: access info from the app itself, in the app's own container. -->
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

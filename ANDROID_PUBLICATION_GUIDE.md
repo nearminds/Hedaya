@@ -12,44 +12,65 @@
 - Ensure you have Android Studio with the latest SDK tools installed
 - Have a keystore file for signing (or create one — see below)
 
-## 2. Create a Signed Release APK
+## 2. Create a Signed Release Bundle
 
-Before uploading, generate a signed release build:
+> **Corrected 2026-09-11.** This section previously said `./gradlew :android:bundleRelease`
+> produces a *signed* bundle. It did not — the `release` build type had no `signingConfig`,
+> so the command produced an **unsigned** AAB that Play Console rejects. The build file now
+> reads signing details from a git-ignored `keystore.properties`; without it the build still
+> succeeds but warns loudly and the artifact stays unsigned.
+
+**Step 1 — create the upload keystore** (once, ever):
 
 ```bash
-cd /Users/ahmedatya_1/workspace/Hedaya
+keytool -genkey -v -keystore ~/keys/hedaya-release.keystore \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias hedaya_key
+```
+
+You will be prompted for a keystore password, a key password, and your name/organisation.
+
+**Step 2 — point the build at it:**
+
+```bash
+cp keystore.properties.example keystore.properties
+# then edit keystore.properties and fill in storeFile / storePassword / keyAlias / keyPassword
+```
+
+`keystore.properties`, `*.keystore` and `*.jks` are in `.gitignore`. Keep them there.
+
+**Step 3 — build:**
+
+```bash
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 ./gradlew :android:bundleRelease
 ```
 
-This creates an Android App Bundle (AAB) at `android/build/outputs/bundle/release/android-release.aab`. Google Play prefers AAB over APK for automatic optimization per device configuration.
+Output: `android/build/outputs/bundle/release/android-release.aab`.
 
-**Generate a Keystore (if you don't have one):**
-You'll need a key to sign the APK. Create one:
+**Step 4 — confirm it is actually signed** before uploading:
 
 ```bash
-keytool -genkey -v -keystore ~/.android/hedaya-release.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias hedaya_key
+unzip -l android/build/outputs/bundle/release/android-release.aab | grep -E "META-INF/.*\.(RSA|DSA|EC)$"
 ```
 
-This prompts for:
-- Keystore password (choose strong password, store securely)
-- Key password (can be same as keystore password)
-- Your name, organization, city, state, country
+One or more lines means signed. **No output means unsigned — do not upload it.**
 
-**Sign the Bundle in Android Studio:**
-1. Open Android Studio → Build → Generate Signed Bundle/APK
-2. Select "Android App Bundle"
-3. Select or create a keystore using the keystore you just created
-4. Verify the signing config and complete the wizard
-5. Android Studio outputs the signed AAB
-
-**Store your keystore safely.** If lost, you cannot update your app on Play Store. Recommended: encrypt and backup to a secure location.
+**Back up the keystore.** If you lose it you can never update the app under this listing
+again. Enrol in Play App Signing (Google Play offers this during your first upload and it
+is the default) so that Google holds the *app* signing key and your keystore is only the
+*upload* key — that way a lost upload key can be reset by Google support instead of
+ending the listing.
 
 ## 3. Prepare App Listing Content
 
 Before uploading to Play Store, prepare these materials:
 
+> Ready-to-paste copy, already written and fact-checked, is in
+> [`docs/store/STORE-LISTING.md`](docs/store/STORE-LISTING.md). Prepared assets are in
+> `docs/store/android/`. Use those rather than re-deriving the text below.
+
 **App Title & Description:**
-- Title: "Hedaya - حداية" (max 50 chars)
+- Title: "هداية — Hedaya" (max 50 chars). Note the spelling: **هداية**, with هـ. An earlier revision of this guide said "حداية", which is a typo and is not the app's name.
 - Short description: "An Islamic companion app for prayer tracking, Quran reading, and daily adhkaar" (max 80 chars)
 - Full description (max 4000 chars): Highlight features:
   - Prayer times and Azan notifications
@@ -78,15 +99,26 @@ Before uploading to Play Store, prepare these materials:
 - Category: Lifestyle or Books & Reference
 - Content Rating: Complete Google Play's Content Rating Questionnaire (usually rates as 3+ or 12+ for Islamic content)
 
-## 4. Create Privacy Policy
+## 4. Privacy Policy and Data Safety
 
-Google Play requires a privacy policy URL. Create one addressing:
-- What data the app collects (location for prayer times, prayer tracking logs stored locally)
-- How data is used (prayer time calculation, no cloud sync, local storage only)
-- User rights regarding data deletion
-- Third-party services (Google Play Services for location, no ad networks if none used)
+**Do not write a new privacy policy.** One already exists and has been verified line by
+line against the source: `docs/privacy-policy.html`, published at
+`https://nearminds.github.io/Hedaya/privacy-policy.html`. GitHub Pages is already on
+(branch `main`, folder `/docs`) — but it serves `main`, so the corrected text only goes
+live once the release branch is merged.
 
-Host the policy at a public URL (GitHub Pages, your website, or free privacy policy generators like privacypolicygenerator.info).
+> **Corrected 2026-09-11.** This section used to suggest describing "prayer tracking logs"
+> as collected data and pointed at third-party policy generators. Both were wrong for this
+> app. The app has **no `INTERNET` permission** and therefore cannot transmit anything; the
+> Data Safety answer is "no data collected or shared".
+
+The exact answers to give in the Data Safety form, and the evidence behind each, are in
+[`docs/store/PRIVACY-DECLARATIONS.md`](docs/store/PRIVACY-DECLARATIONS.md). Use that file —
+it is the authority, not this guide.
+
+That file also flags the one open decision: whether to keep `USE_EXACT_ALARM` (a
+Play-restricted permission needing a justification form) or drop it in favour of
+`SCHEDULE_EXACT_ALARM` alone. Settle that before you start the declarations.
 
 ## 5. Upload to Google Play Console
 
@@ -120,7 +152,7 @@ Host the policy at a public URL (GitHub Pages, your website, or free privacy pol
 5. **Pricing & Distribution:**
    - Choose "Free"
    - Select countries/regions for distribution (worldwide recommended for Islamic content)
-   - Device requirements: Android 8.0+ (API 26+) or higher based on your minSdk
+   - Device requirements: the project sets `minSdk = 24`, i.e. **Android 7.0 Nougat and above**. (This guide previously said API 26 / Android 8.0, which did not match `android/build.gradle.kts`.)
 
 ## 6. Submit for Review
 
@@ -148,27 +180,48 @@ Host the policy at a public URL (GitHub Pages, your website, or free privacy pol
 
 ## 8. Important Notes
 
-- **Keystore Security:** Never commit `hedaya-release.keystore` to Git. Add to `.gitignore`. Store securely offline.
+- **Keystore Security:** `keystore.properties`, `*.keystore` and `*.jks` are already in `.gitignore`. Store the keystore outside the repo and back it up somewhere you will still have in five years.
 - **Version Code:** Google Play tracks every upload. Once you release version X, you cannot re-release version X. Always increment.
 - **Testing:** Consider a closed test release (internal testing track) before public launch to catch issues.
 - **Compliance:** Ensure privacy policy matches your actual data practices. Users expect prayer times calculated locally; clarify no cloud sync.
-- **Language Support:** If adding non-English locales, create separate listings for each (e.g., Arabic, Urdu).
+- **Language Support:** The app UI is Arabic only. List Arabic as the primary language and add an English store listing for discoverability — see `docs/store/STORE-LISTING.md`. Do not claim Urdu or other locales; they do not exist in the project.
 - **Promotional Graphics:** Once live, you can add video, promotional images, and testimonials to boost visibility.
 
 ## Quick Checklist
 
-- [ ] Create Google Play Developer account ($25 fee)
-- [ ] Generate signed release AAB via `./gradlew :android:bundleRelease`
-- [ ] Create/secure keystore file for signing
-- [ ] Prepare 2–8 screenshots (1080×1920 minimum)
-- [ ] Create 1024×500 feature graphic
-- [ ] Prepare 512×512 icon
-- [ ] Write app description and release notes
-- [ ] Create and publish privacy policy URL
-- [ ] Complete content rating questionnaire
-- [ ] Upload AAB and all metadata to Play Console
-- [ ] Click "Publish to Production"
-- [ ] Wait for review (~24 hours)
-- [ ] App goes live; monitor feedback and crashes
+> The authoritative, ordered, unambiguous version of this is
+> [`docs/store/HUMAN-ACTIONS.md`](docs/store/HUMAN-ACTIONS.md). This list is a summary.
 
-Your app is now ready for submission. The entire review and publication process typically takes 1–2 days from submission to live availability on Google Play Store.
+- [ ] Create Google Play Developer account ($25 one-time fee)
+- [ ] Create the upload keystore and `keystore.properties` (§2) — **not done for you**
+- [ ] Build the AAB: `./gradlew :android:bundleRelease`
+- [ ] **Verify the AAB is signed** (§2 step 4) before uploading
+- [ ] Screenshots — already prepared, 6 × 1080×2400 in `docs/store/android/screenshots/`
+- [ ] Feature graphic — already prepared, `docs/store/android/feature-graphic-1024x500.jpg`
+- [ ] 512×512 icon — already prepared, `docs/store/android/play-icon-512.png`
+- [ ] Description and release notes — already written, `docs/store/STORE-LISTING.md`
+- [ ] Merge the release branch so the corrected privacy policy goes live on Pages
+- [ ] Decide the `USE_EXACT_ALARM` question (see `docs/store/PRIVACY-DECLARATIONS.md` §3)
+- [ ] Data Safety form — answers in `docs/store/PRIVACY-DECLARATIONS.md`
+- [ ] Content rating questionnaire
+- [ ] Upload the AAB to the **internal testing** track first, install it, sanity-check
+- [ ] Promote to Production and submit for review
+
+Google review is typically 1–7 days for a brand-new developer account (the "~24 hours"
+figure in older revisions of this guide applies to established accounts; a first
+submission from a new account also goes through identity verification).
+
+## Appendix — toolchain that was verified to work (2026-09-11)
+
+| | |
+|---|---|
+| JDK | Android Studio's bundled JBR 21 (`/Applications/Android Studio.app/Contents/jbr/Contents/Home`). The system `java` is 1.8 and **cannot** build this project. |
+| Gradle | 8.11.1 via `./gradlew`. Gradle 9.x is rejected by the root build script. |
+| AGP | 8.7.2 |
+| compileSdk / targetSdk | 36 (raised from 34 — Google Play requires API 36 for new releases as of 2026-08-31) |
+| minSdk | 24 |
+
+AGP 8.7.2 emits "We recommend using a newer Android Gradle plugin to use compileSdk = 36".
+The build succeeds and the resulting app was verified running on an API 36.1 emulator, so
+this is advisory. Upgrading AGP is a sensible follow-up but was deliberately not done as
+part of the release preparation.

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -10,15 +12,30 @@ val copyDataToAssets = tasks.register<Copy>("copyDataToAssets") {
     from("${rootProject.projectDir}/Hedaya/Data")
     into(project.file("src/main/assets/data"))
 }
+
+// Release signing is read from an untracked keystore.properties at the repo root.
+// See ANDROID_PUBLICATION_GUIDE.md §2. If the file is absent the release build still
+// succeeds but the artifact is UNSIGNED and Play Console will reject it.
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+val hasReleaseKeystore = !keystoreProperties.getProperty("storeFile").isNullOrBlank()
+
 android {
     namespace = "com.hedaya.android"
-    compileSdk = 34
+    // Google Play requires new releases to target API 36 (Android 16) as of 2026-08-31.
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.hedaya.android"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
+        // versionCode must increase on every Play upload; 1 is the first-ever upload.
         versionCode = 1
-        versionName = "1.0"
+        // Keep in step with iOS MARKETING_VERSION in Hedaya.xcodeproj.
+        versionName = "1.6"
     }
     buildFeatures {
         compose = true
@@ -28,8 +45,27 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
     buildTypes {
         release {
+            signingConfig = if (hasReleaseKeystore) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn(
+                    "Hedaya: keystore.properties not found — :android:bundleRelease will produce an " +
+                        "UNSIGNED bundle that Play Console will reject. See ANDROID_PUBLICATION_GUIDE.md §2."
+                )
+                null
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
