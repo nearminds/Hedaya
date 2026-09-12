@@ -129,13 +129,14 @@ inside the app. It is a religious/reference text app.
 
 ## Support and legal URLs
 
-Both pages already exist in this repo under `docs/` and are published via GitHub Pages
-(see `HUMAN-ACTIONS.md` step 1 — Pages must be switched on before these URLs resolve):
+Both pages are already live. GitHub Pages is switched on for `nearminds/Hedaya`, serving
+`main` from `/docs`. **But Pages serves `main`, so the corrected privacy-policy text in
+this branch only goes live once the PR is merged** — see `HUMAN-ACTIONS.md` step 1.
 
 | Field | URL |
 |---|---|
-| Support URL | `https://ahmedatya.github.io/Hedaya/support.html` |
-| Privacy policy URL | `https://ahmedatya.github.io/Hedaya/privacy-policy.html` |
+| Support URL | `https://nearminds.github.io/Hedaya/support.html` |
+| Privacy policy URL | `https://nearminds.github.io/Hedaya/privacy-policy.html` |
 | Marketing URL | *(leave blank — there is no marketing site)* |
 | Copyright (App Store) | `© 2025 Ahmed Atya` |
 

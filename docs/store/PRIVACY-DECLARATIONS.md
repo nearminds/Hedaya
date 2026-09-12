@@ -158,7 +158,7 @@ this is not a judgement call — transmission is impossible.
 
 | Section | Answer |
 |---|---|
-| Privacy policy | `https://ahmedatya.github.io/Hedaya/privacy-policy.html` |
+| Privacy policy | `https://nearminds.github.io/Hedaya/privacy-policy.html` |
 | Ads | **No, my app does not contain ads** |
 | App access | **All functionality is available without special access** (no login) |
 | Content ratings | Complete the IARC questionnaire; answer "No" to every content question. Expect "Everyone / 3+". |

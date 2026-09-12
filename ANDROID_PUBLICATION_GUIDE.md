@@ -103,7 +103,9 @@ Before uploading to Play Store, prepare these materials:
 
 **Do not write a new privacy policy.** One already exists and has been verified line by
 line against the source: `docs/privacy-policy.html`, published at
-`https://ahmedatya.github.io/Hedaya/privacy-policy.html` once GitHub Pages is switched on.
+`https://nearminds.github.io/Hedaya/privacy-policy.html`. GitHub Pages is already on
+(branch `main`, folder `/docs`) — but it serves `main`, so the corrected text only goes
+live once the release branch is merged.
 
 > **Corrected 2026-09-11.** This section used to suggest describing "prayer tracking logs"
 > as collected data and pointed at third-party policy generators. Both were wrong for this
@@ -198,7 +200,7 @@ Play-restricted permission needing a justification form) or drop it in favour of
 - [ ] Feature graphic — already prepared, `docs/store/android/feature-graphic-1024x500.jpg`
 - [ ] 512×512 icon — already prepared, `docs/store/android/play-icon-512.png`
 - [ ] Description and release notes — already written, `docs/store/STORE-LISTING.md`
-- [ ] Turn on GitHub Pages so the privacy-policy URL resolves
+- [ ] Merge the release branch so the corrected privacy policy goes live on Pages
 - [ ] Decide the `USE_EXACT_ALARM` question (see `docs/store/PRIVACY-DECLARATIONS.md` §3)
 - [ ] Data Safety form — answers in `docs/store/PRIVACY-DECLARATIONS.md`
 - [ ] Content rating questionnaire

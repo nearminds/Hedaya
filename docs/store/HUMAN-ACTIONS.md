@@ -13,27 +13,49 @@ Prepared for you already, so you do not have to think about it:
 - Android launcher icon fixed (it was rendering as a blank green square)
 - Store listing copy, Play feature graphic, Play icon and six Android screenshots
 - Data Safety and App Privacy answers written out with the evidence behind each
+- The published privacy policy corrected to cover Android (goes live on merge — step 1)
 
 Legend: **[£]** costs money · **[⏳]** has a waiting period · **[!]** a wrong answer is costly
 
 ---
 
-## Step 1 — Publish the support and privacy pages  (10 min)
+## Step 1 — Merge this branch, so the corrected privacy policy goes live  [!]  (5 min)
 
-Both store submissions need working public URLs, and Apple will reject a listing whose
-privacy URL 404s.
+GitHub Pages is **already switched on** and serving — you do not need to enable anything:
 
-1. <https://github.com/ahmedatya/Hedaya> → **Settings** → **Pages**
-2. Source: **Deploy from a branch**, branch `main`, folder **`/docs`**, then **Save**
-3. Wait ~2 minutes, then confirm both of these load:
-   - <https://ahmedatya.github.io/Hedaya/privacy-policy.html>
-   - <https://ahmedatya.github.io/Hedaya/support.html>
+| | |
+|---|---|
+| Repo | `nearminds/Hedaya` (the old `ahmedatya/Hedaya` URL now redirects here) |
+| Source | branch `main`, folder `/docs` |
+| Privacy policy | <https://nearminds.github.io/Hedaya/privacy-policy.html> |
+| Support | <https://nearminds.github.io/Hedaya/support.html> |
 
-> The repo is currently private-by-default in the sense that Pages is not switched on.
-> If you would rather not use GitHub Pages, host the two HTML files anywhere public and
-> use those URLs instead — but the URLs must be live **before** step 5 and step 9.
+Both return HTTP 200 today.
 
-**Do not continue until both URLs load in a browser.**
+**The catch:** Pages serves `main`. The live privacy policy is still the old revision —
+dated "March 7, 2026" and describing Hedaya as "an Islamic worship companion app for iOS",
+with no mention of Android. This branch corrects it to cover both platforms and to be
+precise about how Android obtains location.
+
+**If you submit the Android app while that page is live, your published privacy policy
+contradicts the app you are shipping.** That is exactly the kind of mismatch a Play policy
+review flags.
+
+So:
+
+1. Merge the `H1-appstore-release` PR into `main`.
+2. Wait ~2 minutes for Pages to rebuild.
+3. Confirm the page now reads "**for iOS and Android**" and "Last updated: September 11, 2026":
+   ```bash
+   curl -s https://nearminds.github.io/Hedaya/privacy-policy.html | grep -o "companion app for [^.]*\."
+   curl -s https://nearminds.github.io/Hedaya/privacy-policy.html | grep -o "Last updated: [^<]*"
+   ```
+
+Only then continue.
+
+> Separately: `LICENSE` still points at `https://github.com/ahmedatya/Hedaya`, which now
+> redirects to `nearminds/Hedaya`. The redirect works, so nothing breaks, but you may want
+> to update the URL in the licence text. That is a legal document, so it was left alone.
 
 ---
 
@@ -165,7 +187,7 @@ which gives exactly 1320 × 2868. Match the framing of the Android set in
 2. **Create app**: name `هداية — Hedaya`, default language **Arabic**, App, Free.
 3. **App content** — work through every section. Answers are in
    [`PRIVACY-DECLARATIONS.md`](PRIVACY-DECLARATIONS.md) §3:
-   - Privacy policy URL: from step 1
+   - Privacy policy URL: `https://nearminds.github.io/Hedaya/privacy-policy.html`
    - Ads: **No**
    - App access: **All functionality available without special access**
    - Data safety: **does not collect or share any user data**  **[!]**
