@@ -155,8 +155,8 @@ If none of the above works:
    - Try building again
 
 4. **Check iOS version:**
-   - Make sure your device is running **iOS 17.0 or later**
-   - The app requires iOS 17.0+
+   - Make sure your device is running **iOS 16.6 or later**
+   - The app requires iOS 16.6+
 
 ---
 

@@ -8,7 +8,7 @@ Complete step-by-step guide to install and run the Hedaya app on your physical i
 - Mac with Xcode installed
 - iPhone or iPad with USB cable
 - Apple ID (free account works)
-- iOS device running iOS 17.0 or later
+- iOS device running **iOS 16.6 or later** (the project's deployment target is 16.6)
 
 ---
 
@@ -160,7 +160,7 @@ This script will:
 
 **Solutions:**
 - Check that you have enough storage on your device
-- Make sure your device is running iOS 17.0 or later
+- Make sure your device is running iOS 16.6 or later
 - Try building again (⌘R)
 - Check Xcode's error messages for specific issues
 
@@ -274,7 +274,7 @@ If you encounter issues not covered here:
 
 1. Check Xcode's **Issue Navigator** (⚠️ icon) for specific errors
 2. Check the **Console** in Xcode for detailed error messages
-3. Make sure your device iOS version is compatible (iOS 17.0+)
+3. Make sure your device iOS version is compatible (iOS 16.6+)
 4. Try the troubleshooting section above
 
 ---

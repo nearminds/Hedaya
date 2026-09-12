@@ -143,7 +143,7 @@ Hedaya/
 
 ## Requirements
 
-- **iOS:** Xcode 15.0 or later (full app, not just Command Line Tools), iOS 17.0+, macOS 13.0+
+- **iOS:** Xcode 15.0 or later (full app, not just Command Line Tools), iOS 16.6+, macOS 13.0+
 - **Android:** Java 17+, Android SDK (API 24+), Gradle 8.x. See [TEST_ANDROID.md](TEST_ANDROID.md) for setup.
 
 ## Setup
