@@ -13,9 +13,10 @@ below was checked against the shipping code and data files on 2026-09-11 — see
 | Field | Value | Limit |
 |---|---|---|
 | App Store name | `هداية — Hedaya` | 30 chars (this is 14) |
-| App Store subtitle | `أذكار وأدعية وقرآن ومتابعة صلاة` | 30 chars (this is 30) |
+| App Store subtitle | `أذكار ومصحف ومتابعة صلاتك` | 30 chars (this is 25) |
+| App Store keywords | `أذكار,أدعية,قرآن,مصحف,صلاة,مواقيت,سبحة,تسبيح,ذكر,اذكار الصباح,اذكار المساء,اسلامي,ورد` | 100 chars (this is 85) |
 | Play title | `هداية — Hedaya` | 50 chars |
-| Play short description | `أذكار الصباح والمساء، القرآن كامل، ومتابعة الصلاة — بدون إنترنت` | 80 chars (this is 62) |
+| Play short description | `أذكار الصباح والمساء، القرآن كامل، ومتابعة الصلاة — بدون إنترنت` | 80 chars (this is 63) |
 | Bundle ID (iOS) | `com.hedaya.app` | — |
 | Application ID (Android) | `com.hedaya.android` | — |
 
@@ -65,7 +66,11 @@ Works completely offline. No account, no ads, no tracking, and no data of any ki
 leaves your device.
 ```
 
-**Character counts:** Arabic 735, English 812. Play allows 4000; App Store allows 4000.
+**Character counts:** Arabic 735, English 812. Both stores allow 4000.
+
+All the lengths in the table above were measured, not estimated. If you edit any of
+this copy, re-measure — App Store Connect silently truncates nothing, it just refuses
+to save.
 
 ---
 
@@ -167,6 +172,7 @@ Constraints the listing must respect, all satisfied by the copy above:
 | App Store icon 1024×1024 | shipped inside the app's asset catalog | ready (no alpha, verified) |
 | App Store screenshots 6.9″ | `ios/screenshots/` | **NOT PRODUCED — see HUMAN-ACTIONS.md step 4** |
 
-`reference/ios-home-DRAFT-do-not-submit.png` is a 1320×2868 capture taken from a stale
-April debug build on a simulator that overlaid an "Apple Intelligence" system banner and
-a Siri glow. It is included only so you can see the intended framing. **Do not upload it.**
+`reference/ios-home-DRAFT-do-not-submit.png` is a **downscaled** thumbnail of a capture
+taken from a stale April debug build, on a simulator that overlaid an "Apple Intelligence"
+system banner and a Siri glow. It is stored small on purpose: it is a framing reference,
+not an asset. **Do not upload it.**

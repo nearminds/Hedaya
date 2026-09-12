@@ -33,9 +33,9 @@ ios/
 
 reference/
   ios-home-DRAFT-do-not-submit.png
-                                 1320x2868, from a stale April debug build with an
-                                 Apple Intelligence system banner across it.
-                                 Included to show intended framing only. Do not upload.
+                                 Downscaled thumbnail from a stale April debug build,
+                                 with an Apple Intelligence system banner across it.
+                                 Framing reference only. Do not upload.
 ```
 
 The App Store icon (1024×1024, no alpha — verified) ships inside the app's asset catalog
